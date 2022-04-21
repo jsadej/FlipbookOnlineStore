@@ -7,10 +7,14 @@ import lombok.*;
 @ToString
 @RequiredArgsConstructor
 public class Book {
-    private final Long id;
-    public final String title;
-    private  final String author;
-    private final Integer year;
+    private Long id;
+    public  String title;
+    private  String author;
+    private  Integer year;
 
-
+    public Book(String title, String author, Integer year) {
+        this.title = title;
+        this.author = author;
+        this.year = year;
+    }
 }
