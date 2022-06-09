@@ -90,9 +90,9 @@ import java.util.stream.Collectors;
     }
 
     @Override
-    public void addBook(CreateBookCommand command) {
+    public Book addBook(CreateBookCommand command) {
         Book book = command.toBooK();
-        repository.save(book);
+        return repository.save(book);
 
     }
 
