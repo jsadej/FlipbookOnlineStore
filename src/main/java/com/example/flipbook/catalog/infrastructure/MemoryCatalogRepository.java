@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -15,7 +16,7 @@ class MemoryCatalogRepository implements CatalogRepository {
 
 
     private final Map<Long, Book> storage = new ConcurrentHashMap<>();
-    private final AtomicLong ID_Next_Value = new AtomicLong(0L);
+    private final AtomicLong ID_Next_Value = new AtomicLong(0);
 
 
     @Override
@@ -25,11 +26,26 @@ class MemoryCatalogRepository implements CatalogRepository {
 
     @Override
     public void save(Book book) {
-        long nextId = nextID();
-        book.setId(nextId);
-        storage.put(nextId,book);
+        if(book.getId()!=null){
+            storage.put(book.getId(),book);
+        }
+        else {
+            long nextId = nextID();
+            book.setId(nextId);
+            storage.put(nextId, book);
+        }
 
 
+    }
+
+    @Override
+    public Optional<Book> findByID(Long id) {
+        return Optional.ofNullable(storage.get(id));
+    }
+
+    @Override
+    public void removeById(Long id) {
+        storage.remove(id);
     }
 
     private long nextID() {
