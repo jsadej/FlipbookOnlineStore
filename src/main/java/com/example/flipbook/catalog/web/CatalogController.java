@@ -9,6 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NegativeOrZero;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
@@ -58,19 +63,36 @@ class CatalogController {
     }
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public  ResponseEntity <Void> addBook(@RequestBody RestCreateBookCommand command){
+    public  ResponseEntity <Void> addBook(@Valid @RequestBody RestCreateBookCommand command){
         Book book=catalog.addBook(command.toCommand());
         return ResponseEntity.created(createBookUri(book)).build();
     }
+    
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable Long id){
+        catalog.removeById(id);
+
+    }
+
+
 
     private URI createBookUri(Book book){
         return ServletUriComponentsBuilder.fromCurrentRequestUri().path(" /" + book.getId().toString()).build().toUri();
     }
     @Data
     private static class RestCreateBookCommand{
+        @NotBlank
         public  String title;
+
+        @NotBlank
         private  String author;
+
+        @NotNull
         private  Integer year;
+
+        @NotNull
+        @DecimalMin("0.00")
         private BigDecimal price;
 
         CreateBookCommand toCommand(){
